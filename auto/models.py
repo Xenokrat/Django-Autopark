@@ -16,6 +16,12 @@ class Vehicle(models.Model):
     color = models.CharField(max_length=255, blank=True, null=True, verbose_name="Цвет")
     purchase_date = models.DateField(blank=True, null=True, verbose_name="Дата покупки")
     photo = models.ImageField(upload_to="photos/%Y/%m/%d/", blank=True, verbose_name="Фото")
+    enterprise = models.ForeignKey(
+        "Enterprise", on_delete=models.CASCADE, related_name="vehicles", verbose_name="Предприятие"
+    )
+    current_driver = models.OneToOneField(
+        "Driver", on_delete=models.SET_NULL, blank=True, null=True, verbose_name="Активный водитель"
+    )
 
     class Meta:
         verbose_name = "Автомобиль"
