@@ -86,3 +86,34 @@ class CarModel(models.Model):
 
     def __str__(self) -> str:
         return self.brand
+
+
+class Driver(models.Model):
+    first_name = models.CharField(max_length=255, verbose_name="Имя")
+    second_name = models.CharField(max_length=255, verbose_name="Фамилия")
+    salary = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="Зарплата")
+    driving_experience = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="Водительский")
+    enterprise = models.ForeignKey(
+        "Enterprise", on_delete=models.CASCADE, related_name="vehicles", verbose_name="Предприятие"
+    )
+    vehicle = models.ForeignKey("Vehicle", on_delete=models.CASCADE, related_name="drivers", verbose_name="Автомобиль")
+
+    def __str__(self) -> str:
+        return f"{self.first_name} {self.second_name}"
+
+    def clean(self) -> None:
+        if not self.pk:
+            return
+        driver = Driver.objects.get(pk=self.pk)
+        if driver.vehicle == self.vehicle:
+            return
+        if self.vehicle.enterprise.drivers.filter(pk=self.pk).exists():
+            raise ValidationError("Этот водитель уже принадлежит предприятию")
+
+
+class Enterprise(models.Model):
+    name = models.CharField(max_length=255, verbose_name="Название предприятия")
+    city = models.CharField(max_length=255, verbose_name="Город")
+
+    def __str__(self) -> str:
+        return self.name
