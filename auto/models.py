@@ -30,16 +30,41 @@ class Vehicle(models.Model):
     def __str__(self) -> str:
         return f"{self.registration_number}"
 
-    def clean(self):
-        regex = "^\w*$"
+    def validate_can_change_enterprise(self) -> None:
+        if not self.pk:
+            return
+        vehicle = Vehicle.objects.get(pk=self.pk)
+        if vehicle.enterprise != self.enterprise and self.current_driver:
+            raise ValidationError(
+                "Невозможно изменить предприятие для данного авто, так как ему назначен активный водитель"
+            )
 
+    def validate_vehicle_enterprise(self) -> None:
+        if not self.pk:
+            return
+        vehicle = Vehicle.objects.get(pk=self.pk)
+        if vehicle.enterprise == self.enterprise:
+            return
+        if self.enterprise.vehicles.filter(pk=self.pk).exists():
+            raise ValidationError("Этот автомобиль уже принадлежит предприятию")
+
+    def validate_vin(self) -> None:
+        regex = "^\w*$"
         VIN = self.VIN.upper()
         if len(VIN) != 17 or not re.search(regex, VIN):
             raise ValidationError("Идентификатор VIN должен состоять из 17 символов, включая только буквы и цифры")
 
+    def validate_reg_numbers(self) -> None:
+        regex = "^\w*$"
         reg_number = self.registration_number
         if not re.search(regex, reg_number):
             raise ValidationError("Номер регистрации должен состоять только из цифр и букв")
+
+    def clean(self) -> None:
+        self.validate_can_change_enterprise()
+        self.validate_vehicle_enterprise()
+        self.validate_vin()
+        self.validate_reg_numbers()
 
 
 class CarModel(models.Model):
