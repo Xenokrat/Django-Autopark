@@ -27,7 +27,7 @@ class Vehicle(models.Model):
         verbose_name = "Автомобиль"
         verbose_name_plural = "Автомобили"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.registration_number}"
 
     def clean(self):
@@ -59,5 +59,5 @@ class CarModel(models.Model):
         verbose_name = "Бренд авто"
         verbose_name_plural = "Бренды авто"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.brand
