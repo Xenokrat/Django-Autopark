@@ -9,6 +9,7 @@ pillow = "*"
 black = "*"
 mypy = "*"
 psycopg2-binary = "*"
+tzdata = "*"
 
 [dev-packages]
 pylint = "*"

@@ -1,7 +1,24 @@
 import re
 
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
+
+
+class Manager(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, primary_key=True, related_name="manager", verbose_name="Учетная запись"
+    )
+    first_name = models.CharField(max_length=100, blank=True, null=True, verbose_name="Имя")
+    second_name = models.CharField(max_length=100, blank=True, null=True, verbose_name="Фамилия")
+    enterprise = models.ManyToManyField("Enterprise", blank=True, verbose_name="Предприятия")
+
+    class Meta:
+        verbose_name = "Менеджер"
+        verbose_name_plural = "Менеджеры"
+
+    def __str__(self) -> str:
+        return f"{self.first_name} {self.second_name}"
 
 
 class Vehicle(models.Model):
