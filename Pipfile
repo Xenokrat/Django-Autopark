@@ -10,6 +10,9 @@ black = "*"
 mypy = "*"
 psycopg2-binary = "*"
 tzdata = "*"
+djangorestframework = "*"
+markdown = "*"
+django-filter = "*"
 
 [dev-packages]
 pylint = "*"
