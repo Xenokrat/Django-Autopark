@@ -13,6 +13,8 @@ tzdata = "*"
 djangorestframework = "*"
 markdown = "*"
 django-filter = "*"
+django-stubs = {extras = ["compatible-mypy"], version = "*"}
+djangorestframework-stubs = {extras = ["compatible-mypy"], version = "*"}
 
 [dev-packages]
 pylint = "*"

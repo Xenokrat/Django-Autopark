@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Автопарк
+{% endblock title %}
+
+{% block content %}
+<h1>Авто</h1>
+<ul>
+{% for auto in object_list %}
+<li>{{ auto.registration_number }} | {{ auto.VIN }} | {{ auto.year }} года</li>
+{% endfor %}
+</ul>
+{% endblock content %}
