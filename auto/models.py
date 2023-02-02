@@ -32,7 +32,7 @@ class Vehicle(models.Model):
     mileage = models.PositiveIntegerField(verbose_name="Пробег")
     color = models.CharField(max_length=255, blank=True, null=True, verbose_name="Цвет")
     purchase_date = models.DateField(blank=True, null=True, verbose_name="Дата покупки")
-    photo = models.ImageField(upload_to="photos/%Y/%m/%d/", blank=True, verbose_name="Фото")
+    photo = models.ImageField(upload_to="photos/%Y/%m/%d/", blank=True, null=True, verbose_name="Фото")
     enterprise = models.ForeignKey(
         "Enterprise", on_delete=models.CASCADE, related_name="vehicles", null=True, verbose_name="Предприятие"
     )
