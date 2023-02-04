@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -13,6 +14,9 @@ from .serializers import DriverSerializer, EnterpriseSerializer, VehicleSerializ
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def vehicle_list(request):
+    paginator = PageNumberPagination()
+    paginator.page_size = 30
+
     if not (hasattr(request.user, "manager") or request.user.is_superuser):
         return Response({"message": "Пользователь не является менеджером"}, status=403)
 
@@ -21,8 +25,9 @@ def vehicle_list(request):
             vehicles = Vehicle.objects.all()
         else:
             vehicles = Vehicle.objects.filter(enterprise__in=request.user.manager.enterprise.all())
-        serializer = VehicleSerializer(vehicles, many=True)
-        return Response(serializer.data)
+        result_page = paginator.paginate_queryset(vehicles, request)
+        serializer = VehicleSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     elif request.method == "POST":
         serializer = VehicleSerializer(data=request.data)
@@ -63,6 +68,9 @@ def vehicle_detail(request, pk: int):
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def driver_list(request):
+    paginator = PageNumberPagination()
+    paginator.page_size = 30
+
     if not (hasattr(request.user, "manager") or request.user.is_superuser):
         return Response({"message": "Пользователь не является менеджером"}, status=403)
 
@@ -71,8 +79,10 @@ def driver_list(request):
             drivers = Driver.objects.all()
         else:
             drivers = Driver.objects.filter(enterprise__in=request.user.manager.enterprise.all())
-        serializer = DriverSerializer(drivers, many=True)
-        return Response(serializer.data)
+
+        result_page = paginator.paginate_queryset(drivers, request)
+        serializer = DriverSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     elif request.method == "POST":
         serializer = DriverSerializer(data=request.data)

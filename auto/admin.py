@@ -29,6 +29,7 @@ class VehicleAdmin(admin.ModelAdmin):
         "get_photo",
     )
     list_editable = ("enterprise",)
+    list_filter = ("enterprise",)
     list_display_links = (
         "id",
         "model",
