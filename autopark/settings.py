@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # third party
     "rest_framework",
+    "django_bootstrap5",
     # myapps
     "auto.apps.AutoConfig",
 ]
