@@ -69,9 +69,11 @@ class VehicleAdmin(admin.ModelAdmin):
         qs = super(VehicleAdmin, self).get_queryset(request)
         if request.user.is_superuser:
             return qs
-        return qs.filter(enterprise__in=request.user.manager.enterprise.all())
+        if hasattr(request.user, "manager"):
+            return qs.filter(enterprise__in=request.user.manager.enterprise.all())
+        return qs.none()
 
-    get_photo.short_description = "Изображение"
+    get_photo.short_description = "Изображение"  # type: ignore
 
 
 class CarModelAdmin(admin.ModelAdmin):
@@ -124,7 +126,9 @@ class EnterpriseAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         if request.user.is_superuser:
             return qs
-        return qs.filter(enterprise__in=request.user.manager.enterprise.all())
+        if hasattr(request.user, "manager"):
+            return qs.filter(enterprise__in=request.user.manager.enterprise.all())
+        return qs.none()
 
 
 class DriverAdmin(admin.ModelAdmin):
@@ -162,7 +166,9 @@ class DriverAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         if request.user.is_superuser:
             return qs
-        return qs.filter(enterprise__in=request.user.manager.enterprise.all())
+        if hasattr(request.user, "manager"):
+            return qs.filter(enterprise__in=request.user.manager.enterprise.all())
+        return qs.none()
 
 
 admin.site.register(Vehicle, VehicleAdmin)

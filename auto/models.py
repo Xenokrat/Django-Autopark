@@ -68,11 +68,11 @@ class Vehicle(models.Model):
             raise ValidationError("Активный водитель должен быть из того же предприятия")
 
     def validate_vehicle_enterprise(self) -> None:
-        if not self.pk:
-            return
+        if not self.pk or not self.enterprise:
+            return None
         vehicle = Vehicle.objects.get(pk=self.pk)
         if vehicle.enterprise == self.enterprise:
-            return
+            return None
         if self.enterprise.vehicles.filter(pk=self.pk).exists():
             raise ValidationError("Этот автомобиль уже принадлежит предприятию")
 
@@ -85,6 +85,8 @@ class Vehicle(models.Model):
     def validate_reg_numbers(self) -> None:
         regex = "^\w*$"
         reg_number = self.registration_number
+        if not reg_number:
+            return None
         if not re.search(regex, reg_number):
             raise ValidationError("Номер регистрации должен состоять только из цифр и букв")
 
