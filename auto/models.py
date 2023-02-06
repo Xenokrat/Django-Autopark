@@ -11,7 +11,7 @@ class Manager(models.Model):
     )
     first_name = models.CharField(max_length=100, blank=True, null=True, verbose_name="Имя")
     second_name = models.CharField(max_length=100, blank=True, null=True, verbose_name="Фамилия")
-    enterprise = models.ManyToManyField("Enterprise", blank=True, verbose_name="Предприятия")
+    enterprise = models.ManyToManyField("Enterprise", blank=True, verbose_name="Предприятия", related_name="manager")
 
     class Meta:
         verbose_name = "Менеджер"

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Мои предприятия
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Список моих предприятий</h1>
+    <table class="table table-striped mt-5">
+      <thead>
+        <tr>
+          <th>Название</th>
+          <th>Город</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for enterprise in object_list %}
+          <tr>
+            <td>{{ enterprise.name }}</td>
+            <td>{{ enterprise.city }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock content %}
