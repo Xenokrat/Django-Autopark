@@ -6,9 +6,20 @@
 
 {% block content %}
 <h1>Авто</h1>
-<ul>
-{% for auto in object_list %}
-<li>{{ auto.registration_number }} | {{ auto.VIN }} | {{ auto.year }} года</li>
+<a href="{% url 'vehicle_create' %}" class="btn btn-primary">Добавить автомобиль</a>
+{% for auto in object_list reversed %}
+
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="media">
+            <p class="card-header">{{ auto.model }}</p>
+            <p class="card-text">Номер регистрации {{ auto.registration_number }}</p>
+            <p class="card-text">VIN: {{ auto.VIN }}</p>
+            <p class="card-text">{{ auto.year }} года</p>
+            <p class="card-text"><a href="{{ auto.get_absolute_url }}">Перейти к авто</a></p>
+        </div>
+    </div>
+</div>
+
 {% endfor %}
-</ul>
 {% endblock content %}

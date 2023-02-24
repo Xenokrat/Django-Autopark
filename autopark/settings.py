@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # third party
     "rest_framework",
     "django_bootstrap5",
+    "crispy_forms",
     # myapps
     "auto.apps.AutoConfig",
 ]
@@ -52,6 +53,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "autopark.timezone_middleware.TimezoneMiddleware",
 ]
 
 ROOT_URLCONF = "autopark.urls"
@@ -154,4 +156,4 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 50,
 }
 
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = "home"

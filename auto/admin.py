@@ -8,15 +8,14 @@ from django.utils.safestring import mark_safe
 
 from .models import CarModel, Driver, Enterprise, Manager, Vehicle
 
-
-class DriverInline(admin.TabularInline):
-    model = Driver
-    extra = 0
+# class DriverInline(admin.TabularInline):
+#     model = Driver
+#     extra = 0
 
 
 class VehicleAdmin(admin.ModelAdmin):
     save_as = True
-    inlines = [DriverInline]
+    # inlines = [DriverInline]
     list_display = (
         "id",
         "model",
@@ -105,12 +104,13 @@ class CarModelAdmin(admin.ModelAdmin):
 
 
 class EnterpriseAdmin(admin.ModelAdmin):
-    inlines = [DriverInline]
+    # inlines = [DriverInline]
     save_as = True
     list_display = (
         "id",
         "name",
         "city",
+        "timezone",
     )
     list_display_links = (
         "id",
@@ -120,6 +120,7 @@ class EnterpriseAdmin(admin.ModelAdmin):
     fields = (
         "name",
         "city",
+        "timezone",
     )
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:

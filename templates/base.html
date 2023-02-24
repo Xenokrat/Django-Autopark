@@ -11,11 +11,20 @@
   <title>{% block title %}Автопарк{% endblock title %}</title>
   <meta name="viewport" content="width=device-width,
   initial-scale=1, shrink-to-fit=no">
+  <script>
+    // Timezone settings
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // e.g. "America/New_York"
+    document.cookie = "django_timezone=" + timezone;
+  </script>
 
 </head>
 
 <body>
   <div>
+    {% block navbar %}
+    {% include 'inc/_navbar.html' %}
+    {% endblock navbar %}
+
       {% block content %}
       {% endblock content %}
   </div>

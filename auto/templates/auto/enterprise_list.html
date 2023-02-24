@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load tz %}
+{% get_current_timezone as TIME_ZONE %}
 
 {% block title %}
 Мои предприятия
@@ -11,14 +13,18 @@
       <thead>
         <tr>
           <th>Название</th>
+          <th>Автомобили</th>
           <th>Город</th>
+          <th>Часовой пояс</th>
         </tr>
       </thead>
       <tbody>
         {% for enterprise in object_list %}
           <tr>
             <td>{{ enterprise.name }}</td>
+            <td><a href={% url 'vehicles' %}>Перейти к авто</a></td>
             <td>{{ enterprise.city }}</td>
+            <td>{{ enterprise.timezone }}</td>
           </tr>
         {% endfor %}
       </tbody>

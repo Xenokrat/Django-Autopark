@@ -18,7 +18,7 @@ def vehicle_list(request):
     paginator.page_size = 30
 
     if not (hasattr(request.user, "manager") or request.user.is_superuser):
-        return Response({"message": "Пользователь не является менеджером"}, status=403)
+        return Response({"message": "Forbidden"}, status=403)
 
     if request.method == "GET":
         if request.user.is_superuser:

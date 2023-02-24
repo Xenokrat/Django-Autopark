@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Авто
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-5">Описание авто</h2>
+  
+    <div class="row mt-3">
+      <div class="col-sm-3 text-right fw-bold">Бренд:</div>
+      <div class="col-sm-9">{{ vehicle.model }}</div>
+    </div>
+  
+    <div class="row mt-3">
+      <div class="col-sm-3 text-right fw-bold">Регистрационный номер:</div>
+      <div class="col-sm-9">{{ vehicle.registration_number }}</div>
+    </div>
+  
+    <div class="row mt-3">
+      <div class="col-sm-3 text-right fw-bold">VIN:</div>
+      <div class="col-sm-9">{{ vehicle.VIN }}</div>
+    </div>
+    
+    <div class="row mt-3">
+      <div class="col-sm-3 text-right fw-bold">Год:</div>
+      <div class="col-sm-9">{{ vehicle.year }}</div>
+    </div>
+  
+    <div class="row mt-3">
+      <div class="col-sm-3 text-right fw-bold">Стоимость:</div>
+      <div class="col-sm-9">{{ vehicle.cost }} руб.</div>
+    </div>
+  
+    <div class="row mt-3">
+      <div class="col-sm-3 text-right fw-bold">Дата покупки:</div>
+      <div class="col-sm-9">{{ vehicle.purchase_date }}</div>
+    </div>
+  
+    <div class="row mt-3">
+      <div class="col-sm-3 text-right fw-bold">Пробег:</div>
+      <div class="col-sm-9">{{ vehicle.mileage }}</div>
+    </div>
+  
+    <div class="row mt-3">
+      <div class="col-sm-3 text-right fw-bold">Цвет:</div>
+      <div class="col-sm-9">{{ vehicle.color }}</div>
+    </div>
+  
+  
+    <div class="row mt-3">
+      <div class="col-sm-3 text-right fw-bold">Текущий водитель:</div>
+      <div class="col-sm-9">{{ vehicle.current_driver|default_if_none:"Нет" }}</div>
+    </div>
+
+    <div class="row mt-3">
+      <div class="col-sm-3 text-right fw-bold">Предприятие:</div>
+      <div class="col-sm-9">{{ vehicle.enterprise }}</div>
+    </div>
+  </div>
+  
+  <div class="text-center mt-3">
+    <a href="{% url 'vehicle_update' vehicle.pk %}" class="btn btn-primary">Редактировать</a>
+    <a href="{% url 'vehicle_delete' vehicle.pk %}" class="btn btn-danger">Удалить</a>
+    <a href="{% url 'vehicles' %}" class="btn btn-primary">Назад</a>
+    </div>
+  {% endblock content %}

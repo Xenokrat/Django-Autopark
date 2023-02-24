@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Авто
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-center mb-5">Редактировать данные авто</h2>
+  <form acton="{% url 'vehicle_update' object.pk %}" method="post">
+    {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary btn-block">
+    Сохранить
+</button>
+<a href="{% url 'vehicle' vehicle.pk %}" class="btn btn-danger">Отмена</a>
+  </form>
+</div>
+
+{% endblock content %}

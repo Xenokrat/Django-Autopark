@@ -1,8 +1,10 @@
 import re
 
+import pytz
 from rest_framework import serializers
 
 from auto.models import Driver, Enterprise, Vehicle
+from django.utils import timezone
 
 
 class VehicleSerializer(serializers.ModelSerializer):
@@ -20,6 +22,16 @@ class VehicleSerializer(serializers.ModelSerializer):
             "color",
             "purchase_date",
         )
+
+    def to_representation(self, instance):
+        # tz = timezone.get_current_timezone_name()
+        # if tz:
+        #     self.fields["purchase_date"] = serializers.DateTimeField(default_timezone=pytz.timezone(tz))
+        # else:
+        self.fields["purchase_date"] = serializers.DateTimeField(
+            default_timezone=pytz.timezone(instance.enterprise.timezone)
+        )
+        return super().to_representation(instance)
 
     def validate(self, data):
         regex = "^\w*$"

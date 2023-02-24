@@ -3,6 +3,7 @@ import re
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.urls import reverse
 
 
 class Manager(models.Model):
@@ -31,7 +32,7 @@ class Vehicle(models.Model):
     cost = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Стоимость")
     mileage = models.PositiveIntegerField(verbose_name="Пробег")
     color = models.CharField(max_length=255, blank=True, null=True, verbose_name="Цвет")
-    purchase_date = models.DateField(blank=True, null=True, verbose_name="Дата покупки")
+    purchase_date = models.DateTimeField(blank=True, null=True, verbose_name="Дата и время покупки")
     photo = models.ImageField(upload_to="photos/%Y/%m/%d/", blank=True, null=True, verbose_name="Фото")
     enterprise = models.ForeignKey(
         "Enterprise", on_delete=models.CASCADE, related_name="vehicles", null=True, verbose_name="Предприятие"
@@ -51,6 +52,9 @@ class Vehicle(models.Model):
 
     def __str__(self) -> str:
         return f"{self.registration_number}"
+
+    def get_absolute_url(self) -> str:
+        return reverse("vehicle", kwargs={"pk": self.pk})
 
     def validate_can_change_enterprise(self) -> None:
         if not self.pk:
@@ -160,8 +164,15 @@ class Driver(models.Model):
 
 
 class Enterprise(models.Model):
+    import pytz
+
+    TIMEZONES = tuple(zip(pytz.country_timezones("Ru"), pytz.country_timezones("Ru")))
+
     name = models.CharField(max_length=255, verbose_name="Название предприятия")
     city = models.CharField(max_length=255, verbose_name="Город")
+    timezone = models.CharField(
+        max_length=32, choices=TIMEZONES, blank=True, default="UTC", verbose_name="Часовой пояс"
+    )
 
     class Meta:
         verbose_name = "Предприятие"

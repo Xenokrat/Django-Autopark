@@ -16,6 +16,7 @@ django-filter = "*"
 django-stubs = {extras = ["compatible-mypy"], version = "*"}
 djangorestframework-stubs = {extras = ["compatible-mypy"], version = "*"}
 django-bootstrap5 = "*"
+django-crispy-forms = "*"
 
 [dev-packages]
 pylint = "*"

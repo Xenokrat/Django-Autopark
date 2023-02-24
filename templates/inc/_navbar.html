@@ -1,0 +1,23 @@
+<nav class="navbar navbar-expand-lg bg-light">
+    <a class="navbar-brand" href="{% url 'home' %}">Автопарк</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+        aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            {% comment %} <li class="nav-item"><a class="nav-link" href="{% url 'contacts' %}">Контакты</a></li>
+            {% if request.user.is_authenticated %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'add_news' %}">Добавить новость</a></li>
+            {% endif %} {% endcomment %}
+        </ul>
+    <span class="navbar-text">
+        {% if request.user.is_authenticated %}
+        Добро пожаловать, {{ user.manager.first_name }} | <a href="{% url 'logout' %}">Выход</a>
+        {% else %}
+        <a href="{% url 'login' %}">Login</a>
+        {% endif %}
+    </span>
+    </div>
+</nav>

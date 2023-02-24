@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Авто
+{% endblock title %}
+
+{% block content %}
+
+<div class="container mt-5">
+  <h2 class="text-center mb-5">Удаление авто</h2>
+<form action="" method="post">{% csrf_token %}
+    <p>Вы уверены, что хотите удалить авто "{{ vehicle.registration_number }}"?</p>
+    <button type="submit" class="btn btn-danger ml-2">Да</button>
+    <a href="{% url 'vehicle' vehicle.pk %}" class="btn btn-primary">Отмена</a>
+</form>
+</div>
+{% endblock content %}
