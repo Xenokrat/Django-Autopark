@@ -40,9 +40,11 @@ class Command(BaseCommand):
                 vin = self._id_generator(17)
 
             if i % 10 == 0:
-                current_driver = random.choice(Driver.objects.filter(enterprise=enterprise))
+                current_driver = random.choice(
+                    Driver.objects.filter(enterprise=enterprise))
                 while Vehicle.objects.filter(current_driver=current_driver).exists():
-                    current_driver = random.choice(Driver.objects.filter(enterprise=enterprise))
+                    current_driver = random.choice(
+                        Driver.objects.filter(enterprise=enterprise))
             else:
                 current_driver = None
 
@@ -54,13 +56,15 @@ class Command(BaseCommand):
                 cost=random.randint(10, 500) * 1000,
                 mileage=random.randint(0, 100) * 1000,
                 color=random.choice(self.COLORS),
-                purchase_date=self._create_random_date("2000-01-01", "2023-01-01"),
+                purchase_date=self._create_random_date(
+                    "2000-01-01", "2023-01-01"),
                 photo=None,
                 enterprise=enterprise,
                 current_driver=current_driver,
             )
 
-        self.stdout.write(self.style.SUCCESS(f"Успешно добавлены {count} авто для предприятия c id {enterprise}"))
+        self.stdout.write(self.style.SUCCESS(
+            f"Успешно добавлены {count} авто для предприятия c id {enterprise}"))
 
     def _id_generator(self, size: int, chars: str = string.ascii_uppercase + string.digits) -> str:
         return "".join(random.choice(chars) for _ in range(size))

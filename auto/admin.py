@@ -1,21 +1,24 @@
 from typing import Any
 
-from django import forms
 from django.contrib import admin
+from django.contrib.gis.admin import OSMGeoAdmin, TabularInline
 from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.utils.safestring import mark_safe
 
-from .models import CarModel, Driver, Enterprise, Manager, Vehicle
+from .models import (CarModel, Driver, Enterprise, GPSAutoTrack, GPSData,
+                     Manager, Vehicle)
 
-# class DriverInline(admin.TabularInline):
-#     model = Driver
-#     extra = 0
+
+class PathInline(TabularInline):
+    model = GPSAutoTrack
+    fields = ("track",)
+    extra = 0
 
 
 class VehicleAdmin(admin.ModelAdmin):
     save_as = True
-    # inlines = [DriverInline]
+    inlines = [PathInline]
     list_display = (
         "id",
         "model",
@@ -172,8 +175,41 @@ class DriverAdmin(admin.ModelAdmin):
         return qs.none()
 
 
+class GPSAutoTrackAdmin(OSMGeoAdmin):
+    save_as = True
+    list_display = (
+        "id",
+        "vehicle",
+        "track",
+        "timestamp_start",
+        "timestamp_end",
+    )
+    list_display_links = (
+        "id",
+        "vehicle",
+    )
+    search_fields = ("vehicle",)
+
+
+class GPSDataAdmin(OSMGeoAdmin):
+    save_as = True
+    list_display = (
+        "id",
+        "vehicle",
+        "point",
+        "timestamp",
+    )
+    list_display_links = (
+        "id",
+        "vehicle",
+    )
+    search_fields = ("vehicle",)
+
+
 admin.site.register(Vehicle, VehicleAdmin)
 admin.site.register(CarModel, CarModelAdmin)
 admin.site.register(Enterprise, EnterpriseAdmin)
 admin.site.register(Driver, DriverAdmin)
 admin.site.register(Manager)
+admin.site.register(GPSAutoTrack, GPSAutoTrackAdmin)
+admin.site.register(GPSData, GPSDataAdmin)

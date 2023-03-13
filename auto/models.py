@@ -1,8 +1,9 @@
 import re
 
 from django.contrib.auth.models import User
+from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
-from django.db import models
+# from django.db import models
 from django.urls import reverse
 
 
@@ -166,7 +167,7 @@ class Driver(models.Model):
 class Enterprise(models.Model):
     import pytz
 
-    TIMEZONES = tuple(zip(pytz.country_timezones("Ru"), pytz.country_timezones("Ru")))
+    TIMEZONES = tuple(zip(pytz.country_timezones["Ru"], pytz.country_timezones["Ru"]))
 
     name = models.CharField(max_length=255, verbose_name="Название предприятия")
     city = models.CharField(max_length=255, verbose_name="Город")
@@ -180,3 +181,30 @@ class Enterprise(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+
+class GPSAutoTrack(models.Model):
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name="gps_auto_track", verbose_name="Авто")
+    track = models.LineStringField(verbose_name="GPS путь")
+    timestamp_start = models.DateTimeField(verbose_name="Время отправления", null=True)
+    timestamp_end = models.DateTimeField(verbose_name="Время прибытия", null=True)
+
+    class Meta:
+        verbose_name = "GPS Трек"
+        verbose_name_plural = "GPS Треки"
+
+    def __str__(self) -> str:
+        return f"Путь авто {self.vehicle} {self.timestamp_start} - {self.timestamp_end}"
+
+
+class GPSData(models.Model):
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name="gps_data", verbose_name="Авто")
+    point = models.PointField(verbose_name="GPS положение")
+    timestamp = models.DateTimeField(verbose_name="Время записи", null=True)
+
+    class Meta:
+        verbose_name = "GPS данные"
+        verbose_name_plural = "GPS данные"
+
+    def __str__(self) -> str:
+        return f"GPS позиция авто {self.vehicle} в время {self.timestamp}"

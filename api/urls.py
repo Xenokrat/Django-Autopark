@@ -8,5 +8,5 @@ urlpatterns = [
     path("drivers/", views.driver_list, name="driver_list"),
     path("drivers/<int:pk>/", views.driver_detail, name="driver_detail"),
     path("enterprises/", views.enterprise_list, name="enterprises_list"),
-    path("enterprises/<int:pk>/", views.enterprise_detail, name="enterprises_detail"),
+    path("gps-data/", views.gps_data_set, name="gps_auto_data"),
 ]

@@ -1,10 +1,10 @@
 import re
 
 import pytz
+from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
-from auto.models import Driver, Enterprise, Vehicle
-from django.utils import timezone
+from auto.models import Driver, Enterprise, GPSData, Vehicle
 
 
 class VehicleSerializer(serializers.ModelSerializer):
@@ -67,3 +67,15 @@ class EnterpriseSerializer(serializers.ModelSerializer):
             "name",
             "city",
         )
+
+
+class GPSDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GPSData
+        fields = ("id", "vehicle", "point", "timestamp")
+
+    def to_representation(self, instance):
+        self.fields["timestamp"] = serializers.DateTimeField(
+            default_timezone=pytz.timezone(instance.vehicle.enterprise.timezone)
+        )
+        return super().to_representation(instance)

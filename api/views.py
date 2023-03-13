@@ -1,13 +1,16 @@
 from rest_framework import status
-from rest_framework.authentication import BasicAuthentication, SessionAuthentication
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.authentication import (BasicAuthentication,
+                                           SessionAuthentication)
+from rest_framework.decorators import (api_view, authentication_classes,
+                                       permission_classes)
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from auto.models import Driver, Enterprise, Vehicle
+from auto.models import Driver, Enterprise, GPSData, Vehicle
 
-from .serializers import DriverSerializer, EnterpriseSerializer, VehicleSerializer
+from .serializers import (DriverSerializer, EnterpriseSerializer,
+                          GPSDataSerializer, VehicleSerializer)
 
 
 @api_view(["GET", "POST"])
@@ -135,5 +138,28 @@ def enterprise_list(request):
     return Response(serializer.data)
 
 
-def enterprise_detail(request):
-    pass
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def gps_data_set(request):
+    if not (hasattr(request.user, "manager") or request.user.is_superuser):
+        return Response({"detail": "Нет доступа"}, status=403)
+
+    vehicle_id = request.query_params.get("vehicle_id")
+    start_time = request.query_params.get("start_time")
+    end_time = request.query_params.get("end_time")
+
+    if not request.user.is_superuser and hasattr(request.user, "manager"):
+        vehicle_enterpirse = Vehicle.objects.get(pk=vehicle_id).enterprise
+        manager_enterprises = request.user.manager.enterprise.all()
+
+        if vehicle_enterpirse not in manager_enterprises:
+            return Response({"detail": "Нет доступа"}, status=403)
+
+    gps_data = GPSData.objects.filter(
+        vehicle_id=vehicle_id,
+        timestamp__range=(start_time, end_time),
+    )
+
+    serializer = GPSDataSerializer(gps_data, many=True)
+    return Response(serializer.data)

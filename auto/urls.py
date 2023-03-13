@@ -1,7 +1,8 @@
-from django.http import HttpResponse
 from django.urls import path
 
-from .views import *
+from .views import (EnterpriseListView, LoginManagerView, VehicleCreateView,
+                    VehicleDeleteView, VehicleDetailView, VehicleListView,
+                    VehicleUpdateView, user_logout)
 
 urlpatterns = [
     path("", EnterpriseListView.as_view(), name="home"),

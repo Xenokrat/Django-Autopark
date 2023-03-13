@@ -14,8 +14,27 @@ tzdata = "^2022.7"
 djangorestframework = "^3.14.0"
 django-bootstrap5 = "^22.2"
 django-crispy-forms = "^2.0"
+pillow = "^9.4.0"
+django-stubs = {extras = ["compatible-mypy"], version = "^1.15.0"}
+djangorestframework-stubs = {extras = ["compatible-mypy"], version = "^1.9.1"}
+mypy = "1.0.1"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 120
+
+[tool.black]
+line-length = 120
+
+[tool.mypy]
+plugins = [
+    "mypy_django_plugin.main",
+    "mypy_drf_plugin.main",
+]
+
+[tool.django-stubs]
+django_settings_module = "autopark.settings"

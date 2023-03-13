@@ -1,9 +1,8 @@
 import random
-import string
-from datetime import datetime
 
-from auto.models import CarModel, Driver, Enterprise, Vehicle
 from django.core.management.base import BaseCommand, CommandError
+
+from auto.models import Driver, Enterprise
 
 
 class Command(BaseCommand):
@@ -56,14 +55,15 @@ class Command(BaseCommand):
 
         count = options.get("count")
         for _ in range(count):
-            vehicle = random.choice(Vehicle.objects.filter(enterprise=enterprise))
+            # vehicle = random.choice(
+            #     Vehicle.objects.filter(enterprise=enterprise))
             Driver.objects.create(
                 first_name=random.choice(self.FIRST_NAMES),
                 second_name=random.choice(self.SECOND_NAMES),
                 salary=random.randint(10, 100) * 1000,
                 driving_experience=random.randint(0, 30),
                 enterprise=enterprise,
-                vehicle=vehicle,
+                vehicle=None,
             )
 
         self.stdout.write(self.style.SUCCESS(f"Успешно добавлены {count} водителей для предприятия c id {enterprise}"))
