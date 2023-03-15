@@ -5,6 +5,7 @@ from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 # from django.db import models
 from django.urls import reverse
+from geopy.geocoders import Nominatim
 
 
 class Manager(models.Model):
@@ -208,3 +209,29 @@ class GPSData(models.Model):
 
     def __str__(self) -> str:
         return f"GPS позиция авто {self.vehicle} в время {self.timestamp}"
+
+
+class AutoRide(models.Model):
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name="auto_rides", verbose_name="Авто")
+    start_date = models.DateTimeField(verbose_name="Время начала поездки")
+    end_date = models.DateTimeField(verbose_name="Время окончания поездки", null=True, blank=True)
+    start_point = models.PointField(verbose_name="Точка начала поездки", null=True)
+    end_point = models.PointField(verbose_name="Точка окончания поездки", null=True)
+
+    def get_start_address(self) -> str | None:
+        geolocator = Nominatim(user_agent="my_app")
+        location = geolocator.reverse((self.start_point.y, self.start_point.x))
+        return location.address if location else None
+
+    def get_end_address(self) -> str | None:
+        geolocator = Nominatim(user_agent="my_app")
+        location = geolocator.reverse((self.end_point.y, self.end_point.x))
+        print(location)
+        return location.address if location else None
+
+    class Meta:
+        verbose_name = "Поездка"
+        verbose_name_plural = "Поездки"
+
+    def __str__(self) -> str:
+        return f"Поездка id {self.pk}, авто {self.vehicle}, начало - {self.start_date}, конец - {self.end_date}"

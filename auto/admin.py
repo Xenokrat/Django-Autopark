@@ -6,8 +6,8 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.utils.safestring import mark_safe
 
-from .models import (CarModel, Driver, Enterprise, GPSAutoTrack, GPSData,
-                     Manager, Vehicle)
+from .models import (AutoRide, CarModel, Driver, Enterprise, GPSAutoTrack,
+                     GPSData, Manager, Vehicle)
 
 
 class PathInline(TabularInline):
@@ -206,6 +206,23 @@ class GPSDataAdmin(OSMGeoAdmin):
     search_fields = ("vehicle",)
 
 
+class AutoRideAdmin(OSMGeoAdmin):
+    save_as = True
+    list_display = (
+        "id",
+        "vehicle",
+        "end_date",
+        "start_date",
+        "start_point",
+        "end_point",
+    )
+    list_display_links = (
+        "id",
+        "vehicle",
+    )
+    search_fields = ("vehicle",)
+
+
 admin.site.register(Vehicle, VehicleAdmin)
 admin.site.register(CarModel, CarModelAdmin)
 admin.site.register(Enterprise, EnterpriseAdmin)
@@ -213,3 +230,4 @@ admin.site.register(Driver, DriverAdmin)
 admin.site.register(Manager)
 admin.site.register(GPSAutoTrack, GPSAutoTrackAdmin)
 admin.site.register(GPSData, GPSDataAdmin)
+admin.site.register(AutoRide, AutoRideAdmin)

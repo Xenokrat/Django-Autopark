@@ -10,7 +10,7 @@ class Command(BaseCommand):
     moscow = Point(37.6173, 55.7558, srid=4326)
     tver = Point(35.9347, 56.8587, srid=4326)
 
-    ride_start = datetime(2023, 1, 14, 8, 0, 0)
+    ride_start = datetime(2023, 1, 20, 8, 0, 0)
     time_step = 10
     ride_duration = 2 * 60 * 60  # 2 hours
     num_points = int(ride_duration / time_step)
