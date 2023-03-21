@@ -1,18 +1,15 @@
-import zoneinfo
-from typing import Any
-
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
-from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  UpdateView)
 
 from .forms import VehicleForm
-from .models import Driver, Enterprise, Vehicle
+from .models import AutoRide, Enterprise, Vehicle
 
 
 @method_decorator(csrf_protect, name="dispatch")
@@ -21,6 +18,8 @@ class VehicleListView(LoginRequiredMixin, ListView):
     model = Vehicle
 
     def get_queryset(self):
+        if self.request.user.is_superuser:
+            return Vehicle.objects.all()
         return Vehicle.objects.filter(enterprise__in=self.request.user.manager.enterprise.all())
 
 
@@ -32,7 +31,7 @@ class VehicleDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # tzname = self.object.enterprise.timezone
+        context["auto_rides"] = AutoRide.objects.filter(vehicle=self.kwargs.get("pk"))
         # timezone.activate(zoneinfo.ZoneInfo(tzname))
         return context
 
