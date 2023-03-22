@@ -164,6 +164,24 @@ files = [
 django = ">=3.2"
 
 [[package]]
+name = "django-leaflet"
+version = "0.28.3"
+description = "Use Leaflet in your django projects"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-leaflet-0.28.3.tar.gz", hash = "sha256:073c10c1629b9427a54f7259468c76ad4bbf3295bc37f4c33fe6a9d871b63692"},
+    {file = "django_leaflet-0.28.3-py3-none-any.whl", hash = "sha256:529b88f149c81bd8dda1e34692dcb7c86597483f2e8b86353bf56ebc0f5e01d9"},
+]
+
+[package.dependencies]
+Django = "*"
+
+[package.extras]
+docs = ["sphinx", "sphinx-autobuild"]
+
+[[package]]
 name = "django-stubs"
 version = "1.15.0"
 description = "Mypy stubs for Django"
@@ -697,4 +715,4 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "3d3690293dd8cf9e16322434dd46d858158dfed3405e2fd0579ecb1202783d34"
+content-hash = "314218772ae7c455e5c2d563c9f01047ee8d815d0ed064f01fd2003d3ad991d5"

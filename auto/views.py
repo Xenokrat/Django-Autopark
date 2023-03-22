@@ -1,15 +1,20 @@
+from copy import deepcopy
+from datetime import datetime, timedelta
+
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
+from django.db.models import Q
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 
 from .forms import VehicleForm
-from .models import AutoRide, Enterprise, Vehicle
+from .models import AutoRide, Enterprise, GPSData, Vehicle
 
 
 @method_decorator(csrf_protect, name="dispatch")
@@ -31,8 +36,18 @@ class VehicleDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["auto_rides"] = AutoRide.objects.filter(vehicle=self.kwargs.get("pk"))
+
+        start_date = self.request.GET.get("start_date", timezone.now().date() - timedelta(days=90))
+        end_date = self.request.GET.get("end_date", timezone.now().date())
+
+        context["auto_rides"] = AutoRide.objects.filter(
+            vehicle=self.kwargs.get("pk"),
+            start_date__gte=start_date,
+            end_date__lte=end_date,
+        )
         # timezone.activate(zoneinfo.ZoneInfo(tzname))
+        context["start_date"] = start_date
+        context["end_date"] = end_date
         return context
 
 
@@ -108,3 +123,25 @@ class LoginManagerView(LoginView):
 def user_logout(request):
     logout(request)
     return redirect("login")
+
+
+@method_decorator(csrf_protect, name="dispatch")
+class RideDetailView(LoginRequiredMixin, DetailView):
+    template_name = "auto/ride_detail.html"
+    model = AutoRide
+    context_object_name = "ride"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        points = list(
+            GPSData.objects.filter(
+                Q(timestamp__range=(self.object.start_date, self.object.end_date)) & Q(vehicle=self.object.vehicle)
+            ).all()
+        )
+        points_list = [[p.point.x, p.point.y] for p in points[::2]]
+        center_point = deepcopy(points_list[len(points_list) // 2])
+        center_point[0], center_point[1] = center_point[1], center_point[0]
+        geojson = {"type": "LineString", "coordinates": points_list}
+        context["geo_points"] = geojson
+        context["center_point"] = center_point
+        return context

@@ -229,6 +229,9 @@ class AutoRide(models.Model):
         print(location)
         return location.address if location else None
 
+    def get_absolute_url(self) -> str:
+        return reverse("ride", kwargs={"pk": self.pk})
+
     class Meta:
         verbose_name = "Поездка"
         verbose_name_plural = "Поездки"

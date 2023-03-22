@@ -7,10 +7,10 @@ from auto.models import GPSData, Vehicle
 
 
 class Command(BaseCommand):
-    moscow = Point(37.6173, 55.7558, srid=4326)
-    tver = Point(35.9347, 56.8587, srid=4326)
+    moscow = Point(43.816, 55.3767, srid=4326)
+    tver = Point(43.9242, 56.3157, srid=4326)
 
-    ride_start = datetime(2023, 1, 20, 8, 0, 0)
+    ride_start = datetime(2023, 1, 20, 12, 0, 0)
     time_step = 10
     ride_duration = 2 * 60 * 60  # 2 hours
     num_points = int(ride_duration / time_step)
@@ -23,7 +23,7 @@ class Command(BaseCommand):
         if not vehicle_arg:
             raise CommandError("Не предоставлен id автомобиля")
 
-        vehicle = Vehicle.objects.get(registration_number=vehicle_arg)
+        vehicle = Vehicle.objects.get(pk=vehicle_arg)
 
         line = LineString([self.moscow, self.tver])
 

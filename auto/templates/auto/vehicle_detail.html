@@ -67,7 +67,19 @@
             <h2>Список поездок</h2>
             {% for ride in auto_rides %}
             <p>{{ ride.start_date }} - {{ ride.end_date }}</p>
+            <p class="card-text"><a href="{{ ride.get_absolute_url }}">Перейти к поездке</a></p>
             {% endfor %}
+            <br>
+            <h2>Фильтр дат</h2>
+            <form method="GET">
+                <label for="start_date">Начальная дата</label>
+                <input type="date" id=start_date" name="start_date" value={{ start_date|date:'Y-m-d' }}>
+
+                <label for="start_date">Конечная дата</label>
+                <input type="date" id=end_date" name="end_date" value={{ end_date|date:'Y-m-d' }}>
+
+                <button type="submit">Отфильтровать</button>
+            </form>
         </div>
 
     </div>

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     # "rest_framework_gis",
     "django_bootstrap5",
     "crispy_forms",
+    "leaflet",
     # myapps
     "auto.apps.AutoConfig",
 ]

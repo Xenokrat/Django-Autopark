@@ -1,10 +1,11 @@
+<!DOCTYPE html>
 {% load django_bootstrap5 %}
 
 {# Load CSS and JavaScript #}
 {% bootstrap_css %}
 {% bootstrap_javascript %}
+{% load leaflet_tags %}
 
-<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -16,6 +17,8 @@
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // e.g. "America/New_York"
     document.cookie = "django_timezone=" + timezone;
   </script>
+  {% leaflet_js %}
+  {% leaflet_css %}
 
 </head>
 

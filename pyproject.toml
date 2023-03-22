@@ -21,6 +21,7 @@ mypy = "1.0.1"
 djangorestframework-gis = "^1.0"
 requests = "^2.28.2"
 geopy = "^2.3.0"
+django-leaflet = "^0.28.3"
 
 
 [build-system]

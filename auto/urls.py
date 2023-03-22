@@ -1,8 +1,8 @@
 from django.urls import path
 
-from .views import (EnterpriseListView, LoginManagerView, VehicleCreateView,
-                    VehicleDeleteView, VehicleDetailView, VehicleListView,
-                    VehicleUpdateView, user_logout)
+from .views import (EnterpriseListView, LoginManagerView, RideDetailView,
+                    VehicleCreateView, VehicleDeleteView, VehicleDetailView,
+                    VehicleListView, VehicleUpdateView, user_logout)
 
 urlpatterns = [
     path("", EnterpriseListView.as_view(), name="home"),
@@ -13,4 +13,7 @@ urlpatterns = [
     path("vehicle/<int:pk>/update/", VehicleUpdateView.as_view(), name="vehicle_update"),
     path("vehicle/create/", VehicleCreateView.as_view(), name="vehicle_create"),
     path("vehicle/<int:pk>/delete/", VehicleDeleteView.as_view(), name="vehicle_delete"),
+    path("ride/<int:pk>/", RideDetailView.as_view(), name="ride"),
 ]
+# <!-- <p><b>Точка отправления:</b> {{ ride.get_start_address }}</p> -->
+# <!-- <p><b>Точка прибытия:</b> {{ ride.get_end_address }}</p> -->

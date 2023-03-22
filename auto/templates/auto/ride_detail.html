@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load leaflet_tags %}
+{% load static %}
+
+{% block title %}
+Авто
+{% endblock title %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+
+        <div class=col-md-6>
+            <h2 class="text-center mb-5">Данные о поездке</h2>
+            <p><b>Номер авто:</b> {{ ride.vehicle.registration_number  }}</p>
+            <p><b>Водитель:</b> {{ ride.vehicle.current_driver|default_if_none:"Нет" }}</p>
+            <p><b>Начало поездки:</b> {{ ride.start_date }}</p>
+            <p><b>Окончание поездки:</b> {{ ride.end_date }}</p>
+            <p><b>Точка отправления:</b> {{ ride.get_start_address }}</p>
+            <p><b>Точка прибытия:</b> {{ ride.get_end_address }}</p>
+        </div>
+        
+        <div class=col-md-6>
+            <h2 class="text-center mb-5">Карта маршрута</h2>
+            <div id="mapid">{% leaflet_map "main" %}</div>
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+
+    var mymap = L.map('mapid').setView({{ center_point|safe }}, 8);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: 'Map data <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+  }).addTo(mymap);
+
+  L.geoJSON({{ geo_points|safe }}, {
+      style: {
+          color: 'blue'
+      }
+  }).addTo(mymap);
+
+</script>
+{% endblock content %}
