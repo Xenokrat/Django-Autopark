@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "leaflet",
     # myapps
     "auto.apps.AutoConfig",
+    "report.apps.ReportConfig",
 ]
 
 MIDDLEWARE = [
@@ -161,3 +162,5 @@ REST_FRAMEWORK = {
 }
 
 LOGIN_REDIRECT_URL = "home"
+
+OPENROUTESERVISE_API = "5b3ce3597851110001cf6248d8fa063e69a14c499f17daba4e56dc1d"

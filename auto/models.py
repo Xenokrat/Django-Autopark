@@ -226,7 +226,6 @@ class AutoRide(models.Model):
     def get_end_address(self) -> str | None:
         geolocator = Nominatim(user_agent="my_app")
         location = geolocator.reverse((self.end_point.y, self.end_point.x))
-        print(location)
         return location.address if location else None
 
     def get_absolute_url(self) -> str:

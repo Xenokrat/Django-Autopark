@@ -39,13 +39,17 @@ class VehicleDetailView(LoginRequiredMixin, DetailView):
 
         start_date = self.request.GET.get("start_date", timezone.now().date() - timedelta(days=90))
         end_date = self.request.GET.get("end_date", timezone.now().date())
+        print(start_date, end_date)
 
-        context["auto_rides"] = AutoRide.objects.filter(
-            vehicle=self.kwargs.get("pk"),
-            start_date__gte=start_date,
-            end_date__lte=end_date,
-        )
+        auto_rides = AutoRide.objects.filter(vehicle=self.kwargs.get("pk"))
+        # if start_date:
+        #     auto_rides = auto_rides.filter(start_date__gte=start_date)
+        #
+        # if end_date:
+        #     auto_rides = auto_rides.filter(end_date__lte=end_date)
+
         # timezone.activate(zoneinfo.ZoneInfo(tzname))
+        context["auto_rides"] = auto_rides
         context["start_date"] = start_date
         context["end_date"] = end_date
         return context
@@ -133,12 +137,18 @@ class RideDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        start_date = self.object.start_date
+        if not start_date:
+            start_date = "2000-01-01"
+
+        end_date = self.object.end_date
+        if not end_date:
+            end_date = "2050-01-01"
+
         points = list(
-            GPSData.objects.filter(
-                Q(timestamp__range=(self.object.start_date, self.object.end_date)) & Q(vehicle=self.object.vehicle)
-            ).all()
+            GPSData.objects.filter(Q(timestamp__range=(start_date, end_date)) & Q(vehicle=self.object.vehicle)).all()
         )
-        points_list = [[p.point.x, p.point.y] for p in points[::2]]
+        points_list = [[p.point.x, p.point.y] for p in points[::60]]
         center_point = deepcopy(points_list[len(points_list) // 2])
         center_point[0], center_point[1] = center_point[1], center_point[0]
         geojson = {"type": "LineString", "coordinates": points_list}
