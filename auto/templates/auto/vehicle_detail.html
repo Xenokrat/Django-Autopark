@@ -89,6 +89,6 @@
   <div class="text-center mt-3">
     <a href="{% url 'vehicle_update' vehicle.pk %}" class="btn btn-primary">Редактировать</a>
     <a href="{% url 'vehicle_delete' vehicle.pk %}" class="btn btn-danger">Удалить</a>
-    <a href="{% url 'vehicles' %}" class="btn btn-primary">Назад</a>
+    <a href="{% url 'vehicles' vehicle.enterprise.id %}" class="btn btn-primary">Назад</a>
     </div>
   {% endblock content %}

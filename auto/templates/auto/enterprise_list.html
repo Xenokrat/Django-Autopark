@@ -16,15 +16,17 @@
           <th>Автомобили</th>
           <th>Город</th>
           <th>Часовой пояс</th>
+          <th>Отчеты</th>
         </tr>
       </thead>
       <tbody>
         {% for enterprise in object_list %}
           <tr>
             <td>{{ enterprise.name }}</td>
-            <td><a href={% url 'vehicles' %}>Перейти к авто</a></td>
+            <td><a href={% url 'vehicles' enterprise.id %}>Перейти к авто</a></td>
             <td>{{ enterprise.city }}</td>
             <td>{{ enterprise.timezone }}</td>
+            <td><a href={% url 'report_types' %}>Перейти к отчетам</a></td>
           </tr>
         {% endfor %}
       </tbody>

@@ -7,6 +7,7 @@ from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from auto.models import AutoRide, Driver, Enterprise, GPSData, Vehicle
+from report.models import CarMileageReport, ReportData
 
 
 class VehicleSerializer(serializers.ModelSerializer):
@@ -126,3 +127,18 @@ class AutoRidesSerializer(serializers.ModelSerializer):
         self.fields["start_point"] = GeometryField()
         self.fields["end_point"] = GeometryField()
         return super().to_representation(instance)
+
+
+class ReportDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReportData
+        fields = ("time", "value")
+
+
+class CarMileageReportSerializer(serializers.ModelSerializer):
+    mileage_data = ReportDataSerializer(many=True, read_only=True)
+    registration_number = serializers.CharField(source="vehicle.registration_number")
+
+    class Meta:
+        model = CarMileageReport
+        fields = ("registration_number", "report_type", "period", "start_date", "end_date", "mileage_data")

@@ -208,14 +208,7 @@ class GPSDataAdmin(OSMGeoAdmin):
 
 class AutoRideAdmin(OSMGeoAdmin):
     save_as = True
-    list_display = (
-        "id",
-        "vehicle",
-        "end_date",
-        "start_date",
-        "start_point",
-        "end_point",
-    )
+    list_display = ("id", "vehicle", "end_date", "start_date", "start_point", "end_point", "distance")
     list_display_links = (
         "id",
         "vehicle",

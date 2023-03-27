@@ -15,16 +15,19 @@ djangorestframework = "^3.14.0"
 django-bootstrap5 = "^22.2"
 django-crispy-forms = "^2.0"
 pillow = "^9.4.0"
-django-stubs = {extras = ["compatible-mypy"], version = "^1.15.0"}
-djangorestframework-stubs = {extras = ["compatible-mypy"], version = "^1.9.1"}
-mypy = "1.0.1"
 djangorestframework-gis = "^1.0"
 requests = "^2.28.2"
 geopy = "^2.3.0"
 django-leaflet = "^0.28.3"
 openrouteservice = "^2.3.3"
-notebook = "^6.5.3"
 numpy = "^1.24.2"
+python-telegram-bot = "^20.2"
+
+[tool.poetry.group.dev.dependencies]
+django-stubs = {extras = ["compatible-mypy"], version = "^1.15.0"}
+djangorestframework-stubs = {extras = ["compatible-mypy"], version = "^1.9.1"}
+mypy = "1.0.1"
+notebook = "^6.5.3"
 
 
 [build-system]

@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import glob
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -40,7 +41,6 @@ INSTALLED_APPS = [
     "django.contrib.gis",
     # third party
     "rest_framework",
-    # "rest_framework_gis",
     "django_bootstrap5",
     "crispy_forms",
     "leaflet",
@@ -164,3 +164,7 @@ REST_FRAMEWORK = {
 LOGIN_REDIRECT_URL = "home"
 
 OPENROUTESERVISE_API = "5b3ce3597851110001cf6248d8fa063e69a14c499f17daba4e56dc1d"
+# OPENROUTESERVISE_API = "5b3ce3597851110001cf6248f8bd9e3e8741433c91acfc83f2e662ea"
+# OPENROUTESERVISE_API = "5b3ce3597851110001cf6248deb6163bfab7495abee149c9eab57be6"
+#
+GDAL_LIBRARY_PATH = glob.glob("/usr/lib/libgdal.so.*")[0]

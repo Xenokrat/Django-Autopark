@@ -10,10 +10,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from auto.models import AutoRide, Driver, Enterprise, GPSData, Vehicle
+from report.models import CarMileageReport, ReportData
 
-from .serializers import (AutoRidesSerializer, DriverSerializer,
-                          EnterpriseSerializer, GPSDataSerializer,
-                          GPSDataSerializerGEOJson, VehicleSerializer)
+from .serializers import (AutoRidesSerializer, CarMileageReportSerializer,
+                          DriverSerializer, EnterpriseSerializer,
+                          GPSDataSerializer, GPSDataSerializerGEOJson,
+                          VehicleSerializer)
 from .utils import convert_local_to_utc
 
 
@@ -245,7 +247,26 @@ def auto_rides_list(request, pk: int):
         # start_date__gte=start_time,
         # end_date__gte=end_time,
     )
-    print(auto_ride_data)
 
     serializer = AutoRidesSerializer(auto_ride_data, many=True)
+    return Response(serializer.data)
+
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def car_mileage_report(request, pk: int):
+    if not (hasattr(request.user, "manager") or request.user.is_superuser):
+        return Response({"detail": "Нет доступа"}, status=403)
+
+    if (not request.user.is_superuser) and hasattr(request.user, "manager"):
+        vehicle_enterpirse = Vehicle.objects.get(pk=pk).enterprise
+        manager_enterprises = request.user.manager.enterprise.all()
+
+        if vehicle_enterpirse not in manager_enterprises:
+            return Response({"detail": "Нет доступа"}, status=403)
+
+    car_mil_report_data = CarMileageReport.objects.get(pk=pk)
+
+    serializer = CarMileageReportSerializer(car_mil_report_data)
     return Response(serializer.data)

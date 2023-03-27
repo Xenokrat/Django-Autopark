@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Мои отчеты
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Список видов отчетов</h1>
+    <table class="table table-striped mt-5">
+        <thead>
+            <tr>
+                <th>Вид</th>
+                <th>Описание</th>
+                <th>Перейти</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report_type in report_types %}
+            <tr>
+                <td>{{ report_type.name }}</td>
+                <td>{{ report_type.description }}</td>
+                <td><a href="{{ report_type.url }}" class="btn btn-primary" }}>Создать</a></td>
+            </tr>
+        </tbody>
+    </table>
+                {% for report in report_type.object_list %}
+                <p><a href="{{ report.get_absolute_url }}">{{ report }}</a></p>
+                {% endfor %}
+{% endfor %}
+</div>
+{% endblock content %}

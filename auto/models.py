@@ -1,11 +1,14 @@
 import re
+from typing import List, Tuple, TypeVar, Union
 
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 # from django.db import models
 from django.urls import reverse
-from geopy.geocoders import Nominatim
+from geopy.geocoders import Nominatim  # type: ignore
+
+Point_ = TypeVar("Point_", bound=Union[List[float], Tuple[float, float]])
 
 
 class Manager(models.Model):
@@ -217,6 +220,7 @@ class AutoRide(models.Model):
     end_date = models.DateTimeField(verbose_name="Время окончания поездки", null=True, blank=True)
     start_point = models.PointField(verbose_name="Точка начала поездки", null=True)
     end_point = models.PointField(verbose_name="Точка окончания поездки", null=True)
+    distance = models.DecimalField("Пробег, км", decimal_places=2, max_digits=8)
 
     def get_start_address(self) -> str | None:
         geolocator = Nominatim(user_agent="my_app")

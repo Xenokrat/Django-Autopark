@@ -11,4 +11,5 @@ urlpatterns = [
     path("gps-data/", views.gps_data_set, name="gps_auto_data"),
     path("auto-rides/vehicle/<int:pk>/", views.auto_rides_set, name="auto_rides_set"),
     path("auto-rides/rides/vehicle/<int:pk>/", views.auto_rides_list, name="auto_rides_list"),
+    path("reports/car-mil-report/<int:pk>/", views.car_mileage_report, name="car_miliage_report_api"),
 ]

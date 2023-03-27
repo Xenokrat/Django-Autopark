@@ -7,7 +7,16 @@
 {% block content %}
 <h1>Авто</h1>
 <a href="{% url 'vehicle_create' %}" class="btn btn-primary">Добавить автомобиль</a>
-{% for auto in object_list reversed %}
+{% for page_number in page_obj.paginator.get_elided_page_range %}
+    {% if page_number == page_obj.paginator.ELLIPSIS %}
+        {{ page_number }}
+    {% else %}
+        <a href="{% url 'vehicles' auto.enterprise.id page_number %}" class="{% if page_number == page_obj.number %}current{% endif %}">
+            {{ page_number }}
+        </a>
+    {% endif %}
+{% endfor %}
+{% for auto in object_list %}
 
 <div class="card mb-3">
     <div class="card-body">
@@ -20,6 +29,9 @@
         </div>
     </div>
 </div>
-
 {% endfor %}
+
+
 {% endblock content %}
+
+

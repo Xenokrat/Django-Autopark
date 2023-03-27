@@ -21,11 +21,12 @@ from .models import AutoRide, Enterprise, GPSData, Vehicle
 class VehicleListView(LoginRequiredMixin, ListView):
     template_name = "auto/vehicle_list.html"
     model = Vehicle
+    # paginate_by = 20
 
     def get_queryset(self):
         if self.request.user.is_superuser:
             return Vehicle.objects.all()
-        return Vehicle.objects.filter(enterprise__in=self.request.user.manager.enterprise.all())
+        return Vehicle.objects.filter(enterprise=self.kwargs["pk"])
 
 
 @method_decorator(csrf_protect, name="dispatch")
@@ -37,7 +38,8 @@ class VehicleDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        start_date = self.request.GET.get("start_date", timezone.now().date() - timedelta(days=90))
+        start_date = self.request.GET.get(
+            "start_date", timezone.now().date() - timedelta(days=90))
         end_date = self.request.GET.get("end_date", timezone.now().date())
         print(start_date, end_date)
 
@@ -146,7 +148,8 @@ class RideDetailView(LoginRequiredMixin, DetailView):
             end_date = "2050-01-01"
 
         points = list(
-            GPSData.objects.filter(Q(timestamp__range=(start_date, end_date)) & Q(vehicle=self.object.vehicle)).all()
+            GPSData.objects.filter(Q(timestamp__range=(start_date, end_date)) & Q(
+                vehicle=self.object.vehicle)).all()
         )
         points_list = [[p.point.x, p.point.y] for p in points[::60]]
         center_point = deepcopy(points_list[len(points_list) // 2])

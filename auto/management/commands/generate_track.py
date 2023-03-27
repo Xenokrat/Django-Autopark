@@ -17,7 +17,7 @@ Point_ = TypeVar("Point_", bound=Union[List[float], Tuple[float, float]])
 
 class Command(BaseCommand):
     help = "Запускает движение авто по заданному маршруту между 2 точками"
-    WRITE_TIME_OPTION = 1
+    WRITE_TIME_OPTION = 60
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -25,12 +25,16 @@ class Command(BaseCommand):
         self.current_speed: int = 0
         self.timestamp: datetime = datetime.now(tz=pytz.UTC)
 
-    def add_arguments(self, parcer) -> None:
-        parcer.add_argument("vehicle_id", type=int, help="ID автомобиля")
-        parcer.add_argument("start_address", type=str, help="Начальный адрес поездки")
-        parcer.add_argument("end_address", type=str, help="Конечный адрес поездки")
-        parcer.add_argument("vehicle_speed", type=int, help="Скорость автомобиля")
-        parcer.add_argument("vehicle_acceleration", type=int, help="Ускорение автомобиля")
+    def add_arguments(self, parser) -> None:
+        parser.add_argument("vehicle_id", type=int, help="ID автомобиля")
+        parser.add_argument("start_address", type=str, help="Начальный адрес поездки")
+        parser.add_argument("end_address", type=str, help="Конечный адрес поездки")
+        parser.add_argument("vehicle_speed", type=int, help="Скорость автомобиля")
+        parser.add_argument("vehicle_acceleration", type=int, help="Ускорение автомобиля")
+        parser.add_argument("in_real_time", type=bool, help="В реальном времени")
+        parser.add_argument("--yes", action="store_true")
+        parser.add_argument("--no", dest="in_real_time", action="store_false")
+        parser.set_defaults(in_real_time=False)
 
     def handle(self, *args, **options) -> None:
         self.vehicle_id = options["vehicle_id"]
@@ -38,6 +42,7 @@ class Command(BaseCommand):
         self.end_address = options["end_address"]
         self.vehicle_speed = options["vehicle_speed"]
         self.vehicle_acceleration = options["vehicle_acceleration"]
+        self.in_real_time = options.get("in_real_time")
 
         enterprise = Vehicle.objects.get(pk=self.vehicle_id).enterprise
         if enterprise:
@@ -62,6 +67,7 @@ class Command(BaseCommand):
             end_date=None,
             start_point=Point(*start_point),
             end_point=None,
+            distance=0,
         )
         this_ride.save()
 
@@ -79,7 +85,8 @@ class Command(BaseCommand):
             point_1 = coordinates[i]
             point_2 = coordinates[i + 1]
 
-            time.sleep(self.WRITE_TIME_OPTION)
+            if self.in_real_time:
+                time.sleep(self.WRITE_TIME_OPTION)
             new_speed = self.WRITE_TIME_OPTION * self.vehicle_acceleration
 
             if new_speed > self.vehicle_speed:
@@ -93,6 +100,8 @@ class Command(BaseCommand):
                 + self.vehicle_acceleration * (self.WRITE_TIME_OPTION**2) // 2
             )
             total_distance += vehicle_dist
+            print(self.current_speed, total_distance)
+            return
 
             if not distance_p1_p2:
                 distance_p1_p2 = self.distance_between_coordinates(point_1, point_2)
@@ -111,6 +120,7 @@ class Command(BaseCommand):
 
         this_ride.end_point = Point(end_point)
         this_ride.end_date = self.timestamp
+        this_ride.distance = total_distance
         this_ride.save()
 
     def get_coordinates_from_address(self, address: str) -> Optional[Point_]:
