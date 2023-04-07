@@ -23,4 +23,5 @@ urlpatterns = [
     path("", include("auto.urls")),
     path("auto_api/", include("api.urls")),
     path("report/", include("report.urls")),
+    path("better/", include("better_auto.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     # myapps
     "auto.apps.AutoConfig",
     "report.apps.ReportConfig",
+    "better_auto.apps.BetterAutoConfig",
 ]
 
 MIDDLEWARE = [
