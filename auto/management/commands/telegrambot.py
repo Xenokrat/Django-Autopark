@@ -1,10 +1,9 @@
 import asyncio
 import logging
-from collections import defaultdict
 from typing import Dict
 
 import requests
-from asgiref.sync import async_to_sync, sync_to_async
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from telegram import ReplyKeyboardMarkup, Update
 from telegram.ext import (ApplicationBuilder, CommandHandler, ContextTypes,
@@ -17,7 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    TELEGRAM_TOKEN = "6200207941:AAEYBSf4MMcscYlsKpwhaLvnMZM3J4_9OeM"
     LOGIN, VEHICLE_ID, START_DATE, END_DATE, REPORT_TYPE = range(5)
 
     def handle(self, *args, **options):
@@ -26,6 +24,7 @@ class Command(BaseCommand):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.sessions: Dict[int, Dict[str, str]] = {}
+        self.TELEGRAM_TOKEN = settings.TELEGRAM_TOKEN
 
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.info(context._user_id)

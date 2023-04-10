@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 import glob
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -101,10 +102,22 @@ DATABASES = {
         "NAME": "autopark",
         "USER": "postgres",
         "PASSWORD": "postgres",
-        "HOST": "localhost",
+        "HOST": "db",
         "PORT": 5432,
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         # "ENGINE": "django.db.backends.postgresql",
+#         "ENGINE": "django.contrib.gis.db.backends.postgis",
+#         "NAME": "autopark",
+#         "USER": "postgres",
+#         "PASSWORD": "postgres",
+#         "HOST": "localhost",
+#         "PORT": 5432,
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -164,8 +177,7 @@ REST_FRAMEWORK = {
 
 LOGIN_REDIRECT_URL = "home"
 
-OPENROUTESERVISE_API = "5b3ce3597851110001cf6248d8fa063e69a14c499f17daba4e56dc1d"
-# OPENROUTESERVISE_API = "5b3ce3597851110001cf6248f8bd9e3e8741433c91acfc83f2e662ea"
-# OPENROUTESERVISE_API = "5b3ce3597851110001cf6248deb6163bfab7495abee149c9eab57be6"
+OPENROUTESERVISE_API = os.getenv("OPENROUTESERVISE_API")
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 #
 GDAL_LIBRARY_PATH = glob.glob("/usr/lib/libgdal.so.*")[0]

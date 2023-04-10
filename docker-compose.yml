@@ -10,15 +10,22 @@ services:
       POSTGRES_DB: autopark
     volumes:
       - ./data:/var/lib/postgresql/data/
-    ports:
-      - "5433:5432"
+    networks:
+      - backend
 
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: bash -c "./wait-for-db.sh db && python manage.py migrate && python manage.py loaddata autopark.json && python manage.py runserver 0.0.0.0:8000 && echo 'server is up'"
     volumes:
       - .:/code
     ports:
       - "8000:8000"
     depends_on:
       - db
+    networks:
+      - backend
+
+networks:
+  backend:
+
+

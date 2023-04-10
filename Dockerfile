@@ -4,6 +4,7 @@ RUN mkdir /app
 
 RUN apt-get update
 RUN apt-get install -y binutils libproj-dev libgdal-dev
+RUN apt-get install -y postgresql-client
 
 RUN pip install --upgrade pip
 RUN pip install poetry
@@ -25,4 +26,4 @@ ENV GDAL_LIBRARY_PATH /usr/lib/libgdal.so
 
 EXPOSE 8000
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["sh", "docker-entrypoint.sh"]
