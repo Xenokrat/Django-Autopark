@@ -8,6 +8,7 @@ class TimezoneMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        print("Привет!")
         try:
             # get django_timezone from cookie
             tzname = request.COOKIES.get("django_timezone")

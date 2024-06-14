@@ -1,0 +1,6 @@
+describe('template spec', () => {
+  it('Goes to the login page', () => {
+      cy.visit('http://localhost:8000/login/');
+      cy.get('input[name="username"]').type('Ivan');
+  })
+})

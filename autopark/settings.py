@@ -41,10 +41,13 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.gis",
     # third party
+    "rest_framework_swagger",
     "rest_framework",
+    "drf_yasg",
     "django_bootstrap5",
     "crispy_forms",
     "leaflet",
+    "debug_toolbar",
     # myapps
     "auto.apps.AutoConfig",
     "report.apps.ReportConfig",
@@ -53,6 +56,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -60,6 +64,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "autopark.timezone_middleware.TimezoneMiddleware",
+    "autopark.middleware.RequestTimeMiddleware",
 ]
 
 ROOT_URLCONF = "autopark.urls"
@@ -79,8 +84,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
             ],
         },
-    },
-]
+    }, ]
 
 WSGI_APPLICATION = "autopark.wsgi.application"
 
@@ -98,26 +102,16 @@ WSGI_APPLICATION = "autopark.wsgi.application"
 DATABASES = {
     "default": {
         # "ENGINE": "django.db.backends.postgresql",
-        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        # "ENGINE": "django.contrib.gis.db.backends.postgis",
+        "ENGINE": "autopark",
         "NAME": "autopark",
         "USER": "postgres",
         "PASSWORD": "postgres",
-        "HOST": "db",
+        "HOST": "localhost",
         "PORT": 5432,
     }
 }
 
-# DATABASES = {
-#     "default": {
-#         # "ENGINE": "django.db.backends.postgresql",
-#         "ENGINE": "django.contrib.gis.db.backends.postgis",
-#         "NAME": "autopark",
-#         "USER": "postgres",
-#         "PASSWORD": "postgres",
-#         "HOST": "localhost",
-#         "PORT": 5432,
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -180,4 +174,21 @@ LOGIN_REDIRECT_URL = "home"
 OPENROUTESERVISE_API = os.getenv("OPENROUTESERVISE_API")
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 #
-GDAL_LIBRARY_PATH = glob.glob("/usr/lib/libgdal.so.*")[0]
+# GDAL_LIBRARY_PATH = glob.glob("/usr/lib/libgdal.so.*")[0]
+# GDAL_LIBRARY_PATH = "/usr/lib/libgdal.so.28"
+
+CACHES = {
+    # we use "default" as the alias.
+    "default": {
+        # Here, we're using the file-based cache backend.
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+
+        # LOCATION parameter to specify the file system path where cached data will be stored.
+        "LOCATION": "/var/tmp/django_cache",
+    }
+}
+DJANGO_ALLOW_ASYNC_UNSAFE = True
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]

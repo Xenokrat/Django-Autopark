@@ -5,8 +5,13 @@ from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 # from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from model_utils import FieldTracker
 from django.urls import reverse
 from geopy.geocoders import Nominatim  # type: ignore
+
+from kafka_service import kafka_producer
 
 Point_ = TypeVar("Point_", bound=Union[List[float], Tuple[float, float]])
 
@@ -50,6 +55,7 @@ class Vehicle(models.Model):
         related_name="vehicles",
         verbose_name="Активный водитель",
     )
+    tracker = FieldTracker()
 
     class Meta:
         verbose_name = "Автомобиль"
@@ -105,6 +111,15 @@ class Vehicle(models.Model):
         self.validate_vehicle_enterprise()
         self.validate_vin()
         self.validate_reg_numbers()
+
+
+# @receiver(post_save, sender=Vehicle)
+# def vehicle_change_logger(_, instance, **kwargs):
+    # request = kwargs.get('request')  # You need to ensure 'request' is passed to signals
+    # if request:
+        # manager_name = request.user.manager
+        # vehicle_changes = f"Changed vehicle {instance.id} status to {instance.model}"
+        # kafka_producer(manager_name, vehicle_changes)
 
 
 class CarModel(models.Model):

@@ -2,8 +2,9 @@ import random
 import string
 from datetime import datetime
 
-from auto.models import CarModel, Driver, Enterprise, Vehicle
 from django.core.management.base import BaseCommand, CommandError
+
+from auto.models import CarModel, Driver, Enterprise, Vehicle
 
 
 class Command(BaseCommand):

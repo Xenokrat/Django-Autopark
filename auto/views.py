@@ -1,21 +1,38 @@
+import json
 from copy import deepcopy
 from datetime import datetime, timedelta
 
+from django.shortcuts import render
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
+from asgiref.sync import sync_to_async
 
 from .forms import VehicleForm
 from .models import AutoRide, Enterprise, GPSData, Vehicle
+from kafka_service import kafka_producer
 
+
+@csrf_exempt
+def save_client_log(request):
+  """
+  Сохраняет собранные данные с клиента в лог
+  """
+  logs = request.POST.get('logs', '[]')
+  with open('request.log', 'a') as f:
+     for log_str in json.loads(logs):
+         f.write(json.dumps(log_str) + '\n')
+
+  return HttpResponse()
 
 @method_decorator(csrf_protect, name="dispatch")
 class VehicleListView(LoginRequiredMixin, ListView):
@@ -26,7 +43,7 @@ class VehicleListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         if self.request.user.is_superuser:
             return Vehicle.objects.all()
-        return Vehicle.objects.filter(enterprise=self.kwargs["pk"])
+        return Vehicle.objects.filter(enterprise=self.kwargs["pk"]).prefetch_related("model")
 
 
 @method_decorator(csrf_protect, name="dispatch")
@@ -41,7 +58,6 @@ class VehicleDetailView(LoginRequiredMixin, DetailView):
         start_date = self.request.GET.get(
             "start_date", timezone.now().date() - timedelta(days=90))
         end_date = self.request.GET.get("end_date", timezone.now().date())
-        print(start_date, end_date)
 
         auto_rides = AutoRide.objects.filter(vehicle=self.kwargs.get("pk"))
         # if start_date:
@@ -63,6 +79,8 @@ class VehicleUpdateView(LoginRequiredMixin, UpdateView):
     model = Vehicle
     context_object_name = "vehicle"
     form_class = VehicleForm
+    #fields = ["model", "registration_number", "VIN", "year", "cost ", "mileage ", 
+              #"color ", "purchase_date ", "photo ", "enterprise", "current_driver"]
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -70,6 +88,17 @@ class VehicleUpdateView(LoginRequiredMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
+        manager = str(self.request.user.manager)
+        changes = [f"Vechicle id: {self.object.id}"]
+        for field in self.object.tracker.changed():
+            old_value = self.object.tracker.previous(field)
+            new_value = getattr(self.object, field)
+            changes.append(f"{field} changed from {old_value} to {new_value}")
+
+        if changes:
+            changes_message = "; ".join(changes)
+            kafka_producer(manager, changes_message)
+
         vehicle = form.save()
         self.pk = vehicle.pk
         return super().form_valid(form)

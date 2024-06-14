@@ -1,10 +1,11 @@
-from django.urls import path
+from django.urls import include, path
 
 from .views import (EnterpriseListView, LoginManagerView, RideDetailView,
                     VehicleCreateView, VehicleDeleteView, VehicleDetailView,
                     VehicleListView, VehicleUpdateView, user_logout)
 
 urlpatterns = [
+    path("__debug__/", include("debug_toolbar.urls")),
     path("", EnterpriseListView.as_view(), name="home"),
     path("login/", LoginManagerView.as_view(), name="login"),
     path("logout/", user_logout, name="logout"),

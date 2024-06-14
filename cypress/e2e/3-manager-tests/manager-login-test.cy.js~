@@ -1,0 +1,22 @@
+describe('template spec', () => {
+
+    // Начинаем с логирования менедрежа
+    beforeEach(() => {
+	cy.visit('http://localhost:8000/login/');
+    });
+
+    it('Goes to the login page', () => {
+	cy.get('input[name="username"]').type('Ivan');
+	cy.get('input[name="password"]').type('8XRXF8PpgUr7tNj');
+	cy.contains('Логин').click();
+	cy.url().should('eq', 'http://localhost:8000/');
+    });
+
+    it('Goes to their enterpraise', () => {
+	cy.get('input[name="username"]').type('Ivan');
+	cy.get('input[name="password"]').type('8XRXF8PpgUr7tNj');
+	cy.contains('Логин').click();
+	cy.url().should('eq', 'http://localhost:8000/');
+    });
+
+})

@@ -2,6 +2,7 @@ import random
 from datetime import datetime, timedelta
 from math import atan2, cos, radians, sin, sqrt
 from typing import Dict, List, Optional, Tuple, TypeVar, Union
+import time
 
 import openrouteservice as ors  # type: ignore
 import pytz
@@ -10,6 +11,10 @@ from django.conf import settings
 from django.contrib.gis.geos.point import Point
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.timezone import make_aware
+from django.core.management.base import BaseCommand
+from rx import create
+from rx.scheduler import ThreadPoolScheduler
+import concurrent.futures
 
 from auto.models import AutoRide, GPSData, Vehicle
 
@@ -57,13 +62,19 @@ class Command(BaseCommand):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.client = ors.Client(key=settings.OPENROUTESERVISE_API)
+        # self.client = ors.Client(key=settings.OPENROUTESERVISE_API)
 
-    def add_arguments(self, parser) -> None:
-        parser.add_argument("vehicle_id", type=int, help="ID автомобиля")
-        parser.add_argument("count", type=int)
+    def generate_track_async(self, observer, scheduler):
+        # Simulate an asynchronous operation, e.g., calling an external API or a heavy computation
+        # For demonstration, let's just emit a fake track between two points
+        observer.on_next("Generating track from Point A to Point B")
+        time.sleep(10)
+        # You might replace this with actual logic to generate the track
+        track_data = "Random track data here"
+        observer.on_next(track_data)
+        observer.on_completed()
 
-    def handle(self, *args, **options) -> None:
+    def _handle(self, *args, **options) -> None:
         self.vehicle_id = options["vehicle_id"]
         count = options["count"]
 
@@ -82,19 +93,6 @@ class Command(BaseCommand):
 
                 start_point = self.start_address
                 end_point = self.end_address
-
-                # start_point = self.get_coordinates_from_address(
-                #     self.start_address)
-                # if start_point is None:
-                #     CommandError(
-                #         f"Начальный адрес не корректный {self.start_address}")
-                #     continue
-                #
-                # end_point = self.get_coordinates_from_address(self.end_address)
-                # if end_point is None:
-                #     CommandError(
-                #         f"Конечный адрес не корректный {self.end_address}")
-                #     continue
 
                 try:
                     coordinates = self.get_track(start_point, end_point)
@@ -143,6 +141,29 @@ class Command(BaseCommand):
             this_ride.save()
             self.stdout.write(self.style.SUCCESS(
                 f"{self.vehicle_id} -- success {n + 1}/{count}"))
+
+
+    def add_arguments(self, parser) -> None:
+        parser.add_argument("vehicle_id", type=int, help="ID автомобиля")
+        parser.add_argument("count", type=int)
+
+    def handle(self, *args, **kwargs):
+        self.stdout.write(self.style.SUCCESS(f"Command started... {datetime.now()}"))
+        optimal_thread_count = concurrent.futures.thread.ThreadPoolExecutor()._max_workers
+        scheduler = ThreadPoolScheduler(optimal_thread_count)
+
+        # Define an observable that wraps our asynchronous track generation function
+        track_generation_observable = create(self.generate_track_async)
+
+        # Subscribe to the observable to start the operation
+        track_generation_observable.subscribe(
+            on_next=lambda x: self.stdout.write(self.style.SUCCESS(x)),
+            on_error=lambda e: self.stderr.write(f'Error: {e}'),
+            on_completed=lambda: self.stdout.write(self.style.SUCCESS("Track generation completed.")),
+            scheduler=scheduler
+        )
+        self.stdout.write(self.style.SUCCESS(f"Command execution continues without waiting for the async task...{datetime.now()}"))
+
 
     def get_coordinates_from_address(self, address: str) -> Optional[Point_]:
         endpoint_search = "https://api.openrouteservice.org/geocode/search"

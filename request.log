@@ -1,0 +1,5 @@
+{"path": "/ride/1/", "request_total": 1.64, "sql_count": 7, "sql_total": 0.011}
+{"path": "/ride/2/", "request_total": 1.50, "sql_count": 7, "sql_total": 0.014}
+{"path": "/ride/2/", "request_total": 1.44, "sql_count": 7, "sql_total": 0.014}
+{"path": "/ride/2/", "request_total": 1.32, "sql_count": 7, "sql_total": 0.016}
+{"path": "/favicon.ico", "request_total": 0.006, "sql_count": 0, "sql_total": 0}
