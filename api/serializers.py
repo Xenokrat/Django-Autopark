@@ -20,16 +20,13 @@ class VehicleSerializer(serializers.ModelSerializer):
             "current_driver",
             "enterprise",
             "cost",
-            "mileage" "year",
+            "mileage",
+            "year",
             "color",
             "purchase_date",
         )
 
     def to_representation(self, instance):
-        # tz = timezone.get_current_timezone_name()
-        # if tz:
-        #     self.fields["purchase_date"] = serializers.DateTimeField(default_timezone=pytz.timezone(tz))
-        # else:
         self.fields["purchase_date"] = serializers.DateTimeField(
             default_timezone=pytz.timezone(instance.enterprise.timezone)
         )

@@ -1,8 +1,7 @@
 import json
 from copy import deepcopy
-from datetime import datetime, timedelta
+from datetime import timedelta
 
-from django.shortcuts import render
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
@@ -15,11 +14,11 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
-from asgiref.sync import sync_to_async
+
+from kafka_service import kafka_producer
 
 from .forms import VehicleForm
 from .models import AutoRide, Enterprise, GPSData, Vehicle
-from kafka_service import kafka_producer
 
 
 @csrf_exempt
@@ -140,6 +139,7 @@ class VehicleDeleteView(LoginRequiredMixin, DeleteView):  # type: ignore
 class EnterpriseListView(LoginRequiredMixin, ListView):
     template_name = "auto/enterprise_list.html"
     model = Enterprise
+    login_url = 'accounts/login/'
 
     def get_queryset(self):
         qs = super().get_queryset()

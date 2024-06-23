@@ -1,0 +1,38 @@
+image: python:3.10
+
+services:
+  - postgis:latest
+
+variables:
+  POSTGRES_DB: autopark
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  DATABASE_URL: "postgres://postgres:postgres@postgres:5432/autopark"
+
+before_script:
+  - pip install poetry
+  - poetry install
+  - cp autopark/settings.py.ci autopark/settings.py
+
+stages:
+  - test
+  - deploy
+
+test:
+  stage: test
+  script:
+    - python manage.py migrate
+    - python manage.py test
+  artifacts:
+    when: always
+    reports:
+      junit: test-results.xml
+    paths:
+      - test-results.xml
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying to production..."
+  only:
+    - main

@@ -7,7 +7,7 @@ from .views import (EnterpriseListView, LoginManagerView, RideDetailView,
 urlpatterns = [
     path("__debug__/", include("debug_toolbar.urls")),
     path("", EnterpriseListView.as_view(), name="home"),
-    path("login/", LoginManagerView.as_view(), name="login"),
+    path("accounts/login/", LoginManagerView.as_view(), name="login"),
     path("logout/", user_logout, name="logout"),
     path("vehicles/<int:pk>/",
          VehicleListView.as_view(), name="vehicles"),

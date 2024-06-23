@@ -1,31 +1,31 @@
-version: "3.10"
+version: '3.8'
 
 services:
-  db:
-    image: postgis/postgis:13-3.1
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: autopark
-    volumes:
-      - ./data:/var/lib/postgresql/data/
-    networks:
-      - backend
-
   web:
     build: .
-    command: bash -c "./wait-for-db.sh db && python manage.py migrate && python manage.py loaddata autopark.json && python manage.py runserver 0.0.0.0:8000 && echo 'server is up'"
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code
+      - .:/usr/src/app/
     ports:
-      - "8000:8000"
+      - 8000:8000
+    env_file:
+      - ./.env.dev
     depends_on:
       - db
-    networks:
-      - backend
+  db:
+    image: postgis/postgis:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  # Use This In Prod
+  # nginx:
+  #   build: ./nginx
+  #   ports:
+  #     - 1337:80
+  #   depends_on:
+  #     - web     - POSTGRES_DB=autopark
 
-networks:
-  backend:
-
-
+volumes:
+  postgres_data:

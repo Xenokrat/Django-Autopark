@@ -32,6 +32,8 @@ pytest-django = "^4.8.0"
 pip = "^24.0"
 django-rest-swagger = "^2.2.0"
 drf-yasg = "^1.21.7"
+python-decouple = "^3.8"
+dj-database-url = "^2.2.0"
 
 [tool.poetry.group.dev.dependencies]
 django-stubs = {extras = ["compatible-mypy"], version = "^1.15.0"}

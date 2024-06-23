@@ -1,18 +1,26 @@
+# pull official base image
 FROM python:3.10
 
-RUN mkdir /app
-
 RUN apt-get update
-RUN apt-get install -y binutils libproj-dev libgdal-dev
-RUN apt-get install -y postgresql-client
+RUN apt-get install -y binutils libproj-dev libgdal-dev netcat-traditional 
+
+# set work directory
+WORKDIR /usr/src/app
+
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
 RUN pip install --upgrade pip
 RUN pip install poetry
 RUN echo $(ls -l /usr/lib/)
 
-COPY . /app
+# copy entrypoint.sh
+COPY ./entrypoint.sh .
+RUN sed -i 's/\r$//g' /usr/src/app/entrypoint.sh
+RUN chmod +x /usr/src/app/entrypoint.sh
 
-WORKDIR /app
+COPY . .
 
 ENV PYTHONPATH=${PYTHONPATH}:${PWD}
 ENV CPLUS_INCLUDE_PATH /usr/include/gdal
@@ -24,6 +32,4 @@ RUN pip install --upgrade --no-cache-dir setuptools==57.5.0
 RUN pip install GDAL==$(gdal-config --version | awk -F'[.]' '{print $1"."$2}')
 ENV GDAL_LIBRARY_PATH /usr/lib/libgdal.so
 
-EXPOSE 8000
-
-CMD ["sh", "docker-entrypoint.sh"]
+ENTRYPOINT [ "/usr/src/app/entrypoint.sh" ]
